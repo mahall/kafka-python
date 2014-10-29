@@ -534,7 +534,7 @@ class KafkaClient(object):
     def send_offset_commit_request(self, group, payloads=[],
                                    fail_on_error=True, callback=None):
         encoder = functools.partial(KafkaProtocol.encode_offset_commit_request,
-                          group=group)
+                                    group=group)
         decoder = KafkaProtocol.decode_offset_commit_response
         try:
             resps = self._send_consumer_aware_request(group, payloads, encoder, decoder)
@@ -556,7 +556,7 @@ class KafkaClient(object):
                                   fail_on_error=True, callback=None):
 
         encoder = functools.partial(KafkaProtocol.encode_offset_fetch_request,
-                          group=group)
+                                    group=group)
         decoder = KafkaProtocol.decode_offset_fetch_response
         try:
             resps = self._send_consumer_aware_request(group, payloads, encoder, decoder)
