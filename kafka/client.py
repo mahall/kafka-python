@@ -69,8 +69,7 @@ class KafkaClient(object):
                                                                  request_id, consumer)
 
         try:
-            response = self._send_broker_unaware_request(request_id, request)
-            broker = KafkaProtocol.decode_consumer_metadata_response(response)
+            broker = self._send_broker_unaware_request(consumer, KafkaProtocol.encode_consumer_metadata_request, KafkaProtocol.decode_consumer_metadata_response)
         except KafkaUnavailableError:
             raise ConsumerMetadataNotSupportedError("Brokers do not support ConsumerMetadataRequest")
 
