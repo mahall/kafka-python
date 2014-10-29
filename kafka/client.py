@@ -245,7 +245,7 @@ class KafkaClient(object):
                 "Coordinator not available for group %s" % group)
 
         # Send the list of request payloads
-        conn = self._get_conn_for_broker(broker)
+        conn = self._get_conn(broker.host, broker.port)
         requestId = self._next_id()
         request = encoder_fn(client_id=self.client_id,
                              correlation_id=requestId, payloads=payloads)
