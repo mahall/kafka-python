@@ -14,7 +14,8 @@ from kafka.common import (
     MetadataResponse, ProduceResponse, FetchResponse,
     OffsetResponse, OffsetCommitResponse, OffsetFetchResponse,
     ProtocolError, BufferUnderflowError, ChecksumError,
-    ConsumerFetchSizeTooSmall, UnsupportedCodecError
+    ConsumerFetchSizeTooSmall, UnsupportedCodecError,
+    OffsetLoadInProgressError, CoordinatorUnavailableError
 )
 from kafka.util import (
     crc32, read_short_string, read_int_string, relative_unpack,
@@ -42,6 +43,7 @@ class KafkaProtocol(object):
     METADATA_KEY = 3
     OFFSET_COMMIT_KEY = 8
     OFFSET_FETCH_KEY = 9
+    CONSUMER_METADATA_KEY = 10
 
     ###################
     #   Private API   #
@@ -432,6 +434,38 @@ class KafkaProtocol(object):
             )
 
         return MetadataResponse(brokers, topic_metadata)
+
+    @classmethod
+    def encode_consumer_metadata_request(cls, client_id, correlation_id, consumer):
+        """
+        Encode a ConsumerMetadataRequest
+        Params
+        ======
+        client_id: string
+        correlation_id: int
+        consumer: string
+        """
+        message = cls._encode_message_header(client_id, correlation_id,
+                                             KafkaProtocol.CONSUMER_METADATA_KEY)
+
+        message += struct.pack('>h%ds' % len(consumer), len(consumer), consumer)
+
+        return write_int_string(message)
+
+    @classmethod
+    def decode_consumer_metadata_response(cls, data):
+        """
+        Decode bytes to a ConsumerMetadataResponse
+        Params
+        ======
+        data: bytes to decode
+        """
+        ((correlation_id, error_code), cur) = relative_unpack('>ih', data, 0)
+
+        ((nodeId, ), cur) = relative_unpack('>i', data, cur)
+        (host, cur) = read_short_string(data, cur)
+        ((port,), cur) = relative_unpack('>i', data, cur)
+        return BrokerMetadata(nodeId, host, port)
 
     @classmethod
     def encode_offset_commit_request(cls, client_id, correlation_id,

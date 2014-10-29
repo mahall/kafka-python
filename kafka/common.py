@@ -150,6 +150,21 @@ class StaleLeaderEpochCodeError(BrokerResponseError):
     message = 'STALE_LEADER_EPOCH_CODE'
 
 
+class OffsetLoadInProgressError(BrokerResponseError):
+    errno = 14
+    message = 'OFFSETS_LOAD_IN_PROGRESS'
+
+
+class CoordinatorUnavailableError(BrokerResponseError):
+    errno = 15
+    message = 'CONSUMER_COORDINATOR_NOT_AVAILABLE'
+
+
+class ConsumerMetadataNotSupportedError(BrokerResponseError):
+    errno = 16
+    message = 'NOT_COORDINATOR_FOR_CONSUMER'
+
+
 class KafkaUnavailableError(KafkaError):
     pass
 
@@ -206,6 +221,9 @@ kafka_errors = {
     11 : StaleControllerEpochError,
     12 : OffsetMetadataTooLargeError,
     13 : StaleLeaderEpochCodeError,
+    14 : OffsetLoadInProgressError,
+    15 : CoordinatorUnavailableError,
+    16 : ConsumerMetadataNotSupportedError,
 }
 
 
