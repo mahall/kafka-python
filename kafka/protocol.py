@@ -436,7 +436,7 @@ class KafkaProtocol(object):
         return MetadataResponse(brokers, topic_metadata)
 
     @classmethod
-    def encode_consumer_metadata_request(cls, client_id, correlation_id, consumer):
+    def encode_consumer_metadata_request(cls, client_id, correlation_id, payloads):
         """
         Encode a ConsumerMetadataRequest
         Params
@@ -445,6 +445,7 @@ class KafkaProtocol(object):
         correlation_id: int
         consumer: string
         """
+        consumer = payloads
         message = cls._encode_message_header(client_id, correlation_id,
                                              KafkaProtocol.CONSUMER_METADATA_KEY)
 
