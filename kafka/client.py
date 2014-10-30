@@ -255,11 +255,11 @@ class KafkaClient(object):
             if decoder_fn is not None:
                 try:
                     response = conn.recv(requestId)
-                except ConnectionError, e:
+                except ConnectionError as e:
                     log.warning("Could not receive response to request [%s] "
                                 "from server %s: %s", request, conn, e)
                     raise FailedPayloadsError(payloads)
-        except ConnectionError, e:
+        except ConnectionError as e:
             log.warning("Could not send request [%s] to server %s: %s",
                         request, conn, e)
             raise FailedPayloadsError(payloads)
